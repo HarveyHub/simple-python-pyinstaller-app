@@ -1,5 +1,9 @@
 pipeline {
     agent any
+	environment{
+		PYTEST = '/f/python/Jenkins/env36/Scripts/py.test'
+		PYINSTALLER = '/f/python/Jenkins/env36/Scripts/pyinstaller'
+	}
     stages {
         stage('Build') {
             steps {
@@ -8,7 +12,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+                sh '$PYTEST --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
             }
             post {
                 always {
@@ -18,13 +22,14 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                sh 'pyinstaller --onefile sources/add2vals.py'
+                sh '$PYINSTALLER --onefile sources/add2vals.py'
             }
             post {
                 success {
-                    archiveArtifacts 'dist/add2vals'
+                    archiveArtifacts 'dist/add2vals.exe'
                 }
             }
         }
     }
 }
+
